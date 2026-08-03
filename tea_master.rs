@@ -4,41 +4,49 @@ use std::io::Write;
 use std::io;
 
 fn main() {
-    let mut numbers: Vec<u64> = vec![];
+    //let mut numbers: Vec<u64> = vec![70, 50, 80, 100, 130, 170, 225, 270];
+    //println!("DARK OOLONG BREWING");
+
+    let mut numbers: Vec<u64> = vec![80, 50, 80, 120, 150, 210];
+    println!("HIGH MOUNTAIN OOLONG BREWING");
+
     numbers.reverse();
-    if numbers.is_empty() {
-        let mut time = get_time();
-        while time > 0 {
-            wait(&time);
-            read("Review: ");
-            time = get_time();
-        }
-    } else {
-        while let Some(number) = numbers.pop() {
-            gray("Press enter to wait ");
-            print!("{}s ", number);
-            flush();
-            let mut val = String::new();
-            io::stdin().read_line(&mut val).expect("Error getting guess");
-            wait(&number);
-        }
+    let mut time = get_time(&get_or_zero(numbers.pop()));
+    let mut counter = 1;
+    while time > 0 {
+        wait(&time);
+        let prompt = format!("Review (#{}): ", counter);
+        read(&prompt);
+        time = get_time(&get_or_zero(numbers.pop()));
+        counter = counter + 1;
     }
     print!("bye");
 }
 
-fn get_time() -> u64 {
-    match read("Enter time to wait (0 to quit): ").trim().parse() {
+fn get_time(default: &u64) -> u64 {
+    let prompt = format!("Enter time to wait (0 to quit) [{}]: ", default);
+    let raw_input = read(&prompt);
+    let input = raw_input.trim().to_string();
+    if input.is_empty() {
+        *default 
+    } else {
+        handle_input(&input, &default)
+    }
+}
+
+fn handle_input(input: &String, default: &u64) -> u64 {
+    match input.parse() {
         Ok(time) => {
             if time > 600 {
                 println!("Please input a smaller number");
-                get_time()
+                get_time(&default)
             } else {
                 time
             }
         },
         Err(_) => {
             println!("Please input a number");
-            get_time()
+            get_time(&default)
         }
     }
 }
@@ -62,6 +70,13 @@ fn wait(time: &u64) {
     }
     green("ready!");
     println!();
+}
+
+fn get_or_zero(number: Option<u64>) -> u64 {
+    match number {
+        Some(number) => number,
+        None => 0
+    }
 }
 
 fn green(message: &str) {
