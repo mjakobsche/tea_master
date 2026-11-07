@@ -4,20 +4,32 @@ use std::io::Write;
 use std::io;
 
 fn main() {
-    //let mut numbers: Vec<u64> = vec![70, 50, 80, 100, 130, 170, 225, 270];
-    //println!("DARK OOLONG BREWING");
 
-    let mut numbers: Vec<u64> = vec![80, 50, 80, 120, 150, 210];
-    println!("HIGH MOUNTAIN OOLONG BREWING");
+    // Set default times for a brewing session
+    // by filling 'defaults' vector with time (in seconds);
+    // each brewing will use next value from the vector;
+    //
+    // for example:
+    //
+    // println!("DARK OOLONG BREWING");
+    // let mut defaults: Vec<u64> = vec![70, 50, 80, 100, 130, 170, 225, 270];
+    //
+    // or:
+    //
+    // println!("HIGH MOUNTAIN OOLONG BREWING");
+    // let mut defaults: Vec<u64> = vec![80, 50, 80, 120, 150, 210];
+    // or just leave it empty - without defaults:
+    // 
+    let mut defaults: Vec<u64> = vec![];
 
-    numbers.reverse();
-    let mut time = get_time(&get_or_zero(numbers.pop()));
+    defaults.reverse();
+    let mut time = get_time(&get_or_zero(defaults.pop()));
     let mut counter = 1;
     while time > 0 {
         wait(&time);
         let prompt = format!("Review (#{}): ", counter);
         read(&prompt);
-        time = get_time(&get_or_zero(numbers.pop()));
+        time = get_time(&get_or_zero(defaults.pop()));
         counter = counter + 1;
     }
     print!("bye");
